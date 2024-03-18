@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diver Logbook</title>
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase configuration -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
+            authDomain: "dykkerloggbok.firebaseapp.com",
+            projectId: "dykkerloggbok",
+            storageBucket: "dykkerloggbok.appspot.com",
+            messagingSenderId: "80214002339",
+            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const firestore = firebase.firestore();
+    </script>
+
+    <!-- Your custom JavaScript -->
+    <script>
+        // Function to handle form submission
+        function submitLogForm() {
+            // Get the current user
+            const user = firebase.auth().currentUser;
+
+            if (user) {
+                // User is signed in
+                const userId = user.uid;
+
+                // Get form data
+                const logData = {
+                    Date: document.getElementById("logDate").value,
+                    StartTime: document.getElementById("startTime").value,
+                    EndTime: document.getElementById("endTime").value,
+                    DiverName: document.getElementById("diverName").value,
+                    DiverBuddiesName: document.getElementById("diverBuddiesName").value,
+                    DiverCertifications: document.getElementById("diverCertifications").value,
+                    DiveLocation: document.getElementById("diveLocation").value,
+                    WaterTemperature: document.getElementById("waterTemperature").value,
+                    MaxDepth: document.getElementById("maxDepth").value,
+                    BottomTime: document.getElementById("bottomTime").value,
+                    TankSize: document.getElementById("tankSize").value,
+                    GasType: document.getElementById("gasType").value,
+                    StartPressure: document.getElementById("startPressure").value,
+                    EndPressure: document.getElementById("endPressure").value,
+                    WeatherConditions: document.getElementById("weatherConditions").value,
+                    Visibility: document.getElementById("visibility").value,
+                    CurrentConditions: document.getElementById("currentConditions").value,
+                    EquipmentList: document.getElementById("equipmentList").value,
+                    Observations: document.getElementById("observations").value,
+                    Incidents: document.getElementById("incidents").value,
+                    ImageUpload: "", // Placeholder for image upload
+                    VideoLinks: "", // Placeholder for video links
+                    MainTextContent: document.getElementById("mainTextContent").value // Main text content
+                };
+
+                // Add the log data to Firestore under the user's "Dives" collection
+                firestore.collection("users").doc(userId).collection("Dives").add(logData)
+                    .then(() => {
+                        console.log("Log data added to Firestore successfully");
+                        alert("Log created successfully!");
+                    })
+                    .catch((error) => {
+                        console.error("Error adding log data to Firestore: ", error);
+                        alert("Failed to create log. Please try again later.");
+                    });
+            } else {
+                // No user is signed in
+                console.log("No user signed in");
+                alert("You need to be signed in to create a log.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Modal for creating a log -->
+    <div id="createLogModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Log</h2>
+            <form id="logForm" onsubmit="event.preventDefault(); submitLogForm();">
+                <!-- Log form fields -->
+                <label for="logDate">Date:</label>
+                <input type="date" id="logDate" required><br>
+
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" required><br>
+
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime" required><br>
+
+                <label for="diverName">Diver's Name:</label>
+                <input type="text" id="diverName" required><br>
+
+                <label for="diverBuddiesName">Diver Buddies Name:</label>
+                <input type="text" id="diverBuddiesName"><br>
+
+                <label for="diverCertifications">Diver's Certifications:</label>
+                <input type="text" id="diverCertifications"><br>
+
+                <label for="diveLocation">Dive Location:</label>
+                <input type="text" id="diveLocation"><br>
+
+                <label for="waterTemperature">Water Temperature:</label>
+                <input type="number" id="waterTemperature"><br>
+
+                <label for="maxDepth">Max Depth Reached:</label>
+                <input type="number" id="maxDepth"><br>
+
+                <label for="bottomTime">Bottom Time:</label>
+                <input type="number" id="bottomTime"><br>
+
+                <label for="tankSize">Tank Size (Total Liters):</label>
+                <input type="number" id="tankSize"><br>
+
+                <label for="gasType">Gas Type:</label>
+                <input type="text" id="gasType"><br>
+
+                <label for="startPressure">Start Pressure in Tanks:</label>
+                <input type="number" id="startPressure"><br>
+
+                <label for="endPressure">End Pressure in Tanks:</label>
+                <input type="number" id="endPressure"><br>
+
+                <label for="weatherConditions">Weather Conditions:</label>
+                <input type="text" id="weatherConditions"><br>
+
+                <label for="visibility">Underwater Visibility:</label>
+                <input type="text" id="visibility"><br>
+
+                <label for="currentConditions">Current Conditions:</label>
+                <input type="text" id="currentConditions"><br>
+
+                <label for="equipmentList">Equipment List:</label>
+                <input type="text" id="equipmentList"><br>
+
+                <label for="observations">Observations:</label>
+                <textarea id="observations" rows="4"></textarea><br>
+
+                <label for="incidents">Incidents:</label>
+                <textarea id="incidents" rows="4"></textarea><br>
+
+                <label for="mainTextContent">Main Text Content:</label>
+                <textarea id="mainTextContent" rows="6"></textarea>
+                <br><br>
+
+
+                <!-- Submit button -->
+                <button type="submit">Submit</button>
+            </form>
+            
+        </div>
+    </div>
+
+    <!-- Include your CSS files and other JavaScript files here -->
+</body>
+</html>

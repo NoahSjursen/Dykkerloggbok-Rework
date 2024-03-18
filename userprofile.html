@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Include your CSS files here -->
+    <!-- Your CSS links -->
+
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase configuration -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
+            authDomain: "dykkerloggbok.firebaseapp.com",
+            projectId: "dykkerloggbok",
+            storageBucket: "dykkerloggbok.appspot.com",
+            messagingSenderId: "80214002339",
+            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
+
+        // Add a listener to check the authentication state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User is signed in:", user);
+                fetchProfileData(user.uid); // Fetch profile data if user is signed in
+            } else {
+                console.log("No user is signed in.");
+            }
+        });
+
+        let profileData = null;
+
+        // Function to fetch and display user profile data
+        function fetchProfileData(userId) {
+            const profileRef = firestore.collection("users").doc(userId).collection("Profile").doc("Profile_Info");
+
+            profileRef.get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        profileData = doc.data();
+                        console.log("Profile data:", profileData);
+                        displayProfileData(profileData);
+                        // Enable edit button after loading profile data
+                        document.getElementById("editButton").disabled = false;
+                    } else {
+                        console.log("No profile data found.");
+                        // Create default profile data
+                        const defaultProfileData = {
+                            diverName: "Default Diver",
+                            username: "default_username",
+                            bio: "This is a default bio."
+                            // Add more default fields if needed
+                        };
+                        // Save default profile data to Firestore
+                        profileRef.set(defaultProfileData)
+                            .then(() => {
+                                console.log("Default profile data created and saved:", defaultProfileData);
+                                // Display default profile data
+                                profileData = defaultProfileData;
+                                displayProfileData(defaultProfileData);
+                                // Create default documents for Equipment and Friends
+                                createDefaultDocuments(userId);
+                                // Enable edit button after creating default data
+                                document.getElementById("editButton").disabled = false;
+                            })
+                            .catch((error) => {
+                                console.error("Error creating default profile data:", error);
+                                document.getElementById("profileInfo").textContent = "Error creating default profile data.";
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error retrieving profile data:", error);
+                    document.getElementById("profileInfo").textContent = "Error retrieving profile data.";
+                });
+        }
+
+        // Function to create default documents for Equipment and Friends
+        function createDefaultDocuments(userId) {
+            const equipmentRef = firestore.collection("users").doc(userId).collection("Equipment").doc("Equipment_Info");
+            const friendsRef = firestore.collection("users").doc(userId).collection("Friends").doc("Friends_Info");
+
+            const defaultEquipmentData = {
+                // Default equipment data
+            };
+
+            const defaultFriendsData = {
+                // Default friends data
+            };
+
+            // Save default equipment data to Firestore
+            equipmentRef.set(defaultEquipmentData)
+                .then(() => {
+                    console.log("Default equipment data created and saved:", defaultEquipmentData);
+                })
+                .catch((error) => {
+                    console.error("Error creating default equipment data:", error);
+                });
+
+            // Save default friends data to Firestore
+            friendsRef.set(defaultFriendsData)
+                .then(() => {
+                    console.log("Default friends data created and saved:", defaultFriendsData);
+                })
+                .catch((error) => {
+                    console.error("Error creating default friends data:", error);
+                });
+        }
+
+        // Function to display user profile data
+        function displayProfileData(profileData) {
+            document.getElementById("diverName").value = profileData.diverName;
+            document.getElementById("username").value = profileData.username;
+            document.getElementById("bio").value = profileData.bio;
+        }
+
+        // Function to handle edit profile button click
+        function handleEditProfile() {
+            document.getElementById("diverName").readOnly = false;
+            document.getElementById("username").readOnly = false;
+            document.getElementById("bio").readOnly = false;
+            document.getElementById("saveButton").disabled = false;
+        }
+
+        // Function to save profile data
+        function saveProfileData() {
+            const updatedProfileData = {
+                diverName: document.getElementById("diverName").value,
+                username: document.getElementById("username").value,
+                bio: document.getElementById("bio").value
+            };
+
+            // Update profile data in Firestore
+            const userId = firebase.auth().currentUser.uid;
+            const profileRef = firestore.collection("users").doc(userId).collection("Profile").doc("Profile_Info");
+
+            profileRef.set(updatedProfileData, { merge: true })
+                .then(() => {
+                    console.log("Profile data updated successfully:", updatedProfileData);
+                    // Disable text fields and save button after saving data
+                    document.getElementById("diverName").readOnly = true;
+                    document.getElementById("username").readOnly = true;
+                    document.getElementById("bio").readOnly = true;
+                    document.getElementById("saveButton").disabled = true;
+                })
+                .catch((error) => {
+                    console.error("Error updating profile data:", error);
+                    alert("Failed to save profile data. Please try again.");
+                });
+        }
+    </script>
+</head>
+<body>
+    <!-- Your main content -->
+    <h2>User Profile</h2>
+    <label for="diverName">Diver Name:</label>
+    <input type="text" id="diverName" readonly><br><br>
+    
+    <label for="username">Username:</label>
+    <input type="text" id="username" readonly><br><br>
+
+    <label for="bio">Bio:</label>
+    <textarea id="bio" readonly></textarea><br><br>
+
+    <!-- Edit profile button -->
+    <button id="editButton" onclick="handleEditProfile()" disabled>Edit Profile</button>
+
+    <!-- Save button -->
+    <button id="saveButton" onclick="saveProfileData()" disabled>Save</button>
+
+    <!-- Include your JavaScript files here -->
+    <!-- Your JavaScript links -->
+</body>
+</html>

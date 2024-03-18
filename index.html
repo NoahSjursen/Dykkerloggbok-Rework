@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diver Logbook</title>
+    <!-- Include your CSS files here -->
+    <!-- Your CSS links -->
+
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase configuration -->
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
+          authDomain: "dykkerloggbok.firebaseapp.com",
+          projectId: "dykkerloggbok",
+          storageBucket: "dykkerloggbok.appspot.com",
+          messagingSenderId: "80214002339",
+          appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
+    </script>
+
+<script>
+  // Function to register a new user
+  function registerUser() {
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const username = document.getElementById("registerUsername").value; // Get username
+
+      auth.createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+              // Registered successfully
+              const user = userCredential.user;
+              console.log("User registered:", user);
+
+              // Add user to Firestore with email and username directly under the user document
+              firestore.collection("users").doc(user.uid).set({
+                  email: email,
+                  username: username
+              })
+              .then(() => {
+                  console.log("User added to Firestore");
+                  alert("User registered successfully!");
+                  window.location.href = "main.html";
+              })
+              .catch((error) => {
+                  console.error("Error adding user to Firestore:", error);
+                  alert("Registration failed: " + error.message);
+              });
+          })
+          .catch((error) => {
+              // Handle errors
+              console.error("Registration failed:", error.message);
+              alert("Registration failed: " + error.message);
+          });
+  }
+
+  // Function to log in an existing user
+  function loginUser() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+              // Logged in successfully
+              const user = userCredential.user;
+              console.log("User logged in:", user);
+              // Store UID in localStorage
+              localStorage.setItem('uid', user.uid);
+              alert("Logged in successfully!");
+              window.location.href = "main.html";
+          })
+          .catch((error) => {
+              // Handle errors
+              console.error("Login failed:", error.message);
+              alert("Login failed: " + error.message);
+          });
+  }
+</script>
+
+</head>
+<body>
+    <!-- Your login form -->
+    <div class="auth-container">
+        <div class="form-container">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Your registration form -->
+    <div class="auth-container">
+        <div class="form-container">
+            <h2>Register</h2>
+            <form id="registerForm" onsubmit="event.preventDefault(); registerUser();">
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="input-group"> <!-- Add input field for username -->
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <button type="submit" class="btn register-btn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include your JavaScript files here -->
+    <!-- Your JavaScript links -->
+</body>
+</html>

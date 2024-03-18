@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dive Log</title>
+</head>
+<body>
+    <h1>Dive Details</h1>
+    <div id="diveDetails">
+        <!-- Dive details will be displayed here -->
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
+            authDomain: "dykkerloggbok.firebaseapp.com",
+            projectId: "dykkerloggbok",
+            storageBucket: "dykkerloggbok.appspot.com",
+            messagingSenderId: "80214002339",
+            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const firestore = firebase.firestore();
+
+        // Retrieve the diveId from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const diveId = urlParams.get('diveId');
+
+        // Retrieve the user ID from local storage
+        const userId = localStorage.getItem('uid');
+
+        // Reference to the dive document in Firestore
+        const diveRef = firestore.collection("users").doc(userId).collection("Dives").doc(diveId);
+
+        // Get dive data from Firestore
+        diveRef.get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const diveData = doc.data();
+                    displayDiveDetails(diveData);
+                } else {
+                    document.getElementById("diveDetails").textContent = "No such dive ID found!";
+                }
+            })
+            .catch((error) => {
+                console.error("Error retrieving dive details:", error);
+                document.getElementById("diveDetails").textContent = "Error retrieving dive details.";
+            });
+
+        // Function to display dive details
+        function displayDiveDetails(diveData) {
+            const diveDetailsElement = document.getElementById("diveDetails");
+            diveDetailsElement.innerHTML = ''; // Clear existing content
+
+            // Iterate over all fields in diveData object
+            for (const key in diveData) {
+                if (Object.hasOwnProperty.call(diveData, key)) {
+                    const value = diveData[key];
+                    const paragraph = document.createElement('p');
+                    paragraph.textContent = `${key}: ${value}`;
+                    diveDetailsElement.appendChild(paragraph);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

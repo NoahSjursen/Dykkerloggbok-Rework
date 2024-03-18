@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Diver Logbook</title>
+    <!-- Include your CSS files here -->
+    <!-- Your CSS links -->
+
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Your Firebase configuration -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
+            authDomain: "dykkerloggbok.firebaseapp.com",
+            projectId: "dykkerloggbok",
+            storageBucket: "dykkerloggbok.appspot.com",
+            messagingSenderId: "80214002339",
+            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
+
+        // Add a listener to check the authentication state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User is signed in:", user);
+                fetchPreviousDives(); // Fetch dives if user is signed in
+                fetchFriendRequests(); // Fetch friend requests
+            } else {
+                console.log("No user is signed in.");
+            }
+        });
+
+        // Function to fetch and display previous dives
+        function fetchPreviousDives() {
+            const user = auth.currentUser;
+            const userId = user.uid;
+
+            // Reference to the user's dives collection
+            const divesRef = firestore.collection("users").doc(userId).collection("Dives");
+
+            // Clear previous dive data
+            document.getElementById("previousDivesList").innerHTML = "";
+
+            // Retrieve dives from Firestore for the current user from the subcollection
+            divesRef.get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const diveData = doc.data();
+                        console.log(diveData); // Log dive data
+
+                        // Create a list item
+                        const diveItem = document.createElement("li");
+
+                        // Create an anchor element
+                        const diveLink = document.createElement("a");
+                        diveLink.textContent = `Date: ${diveData.Date}, Location: ${diveData.DiveLocation}`;
+
+                        // Set the href attribute with the Dive ID as a query parameter
+                        diveLink.href = `log.html?diveId=${doc.id}`;
+
+                        // Append the anchor element to the list item
+                        diveItem.appendChild(diveLink);
+
+                        // Append the list item to the unordered list
+                        document.getElementById("previousDivesList").appendChild(diveItem);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching dives:", error);
+                });
+        }
+
+        // Function to search for users by username
+        function searchUsersByUsername() {
+            const username = document.getElementById("searchUsername").value.trim();
+
+            // Clear previous search results
+            const searchResultsList = document.getElementById("searchResults");
+            searchResultsList.innerHTML = "";
+
+            // Query Firestore to find users with matching usernames
+            firestore.collection("users").get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((userDoc) => {
+                        const userData = userDoc.data();
+                        const userId = userDoc.id;
+                        const userUsername = userData.username; // Retrieve username directly from the UID document
+
+                        // You can add more conditions here to filter results based on username or any other criteria
+                        if (userUsername === username) {
+                            // Create a list item for the matching user
+                            const userItem = document.createElement("li");
+                            userItem.textContent = `Username: ${userUsername}, Email: ${userData.email}`;
+                            
+                            // Create a button to add the user as a friend
+                            const addButton = document.createElement("button");
+                            addButton.textContent = "Add Friend";
+                            addButton.onclick = function() {
+                                addFriend(userId);
+                            };
+                            userItem.appendChild(addButton);
+                            
+                            // Append the list item to the search results list
+                            searchResultsList.appendChild(userItem);
+                        }
+                    });
+
+                    // Display a message if no results found
+                    if (searchResultsList.children.length === 0) {
+                        const noResultsItem = document.createElement("li");
+                        noResultsItem.textContent = "No users found with that username.";
+                        searchResultsList.appendChild(noResultsItem);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error searching for users:", error);
+                });
+        }
+
+        // Function to add a user as a friend and send a friend request
+        function addFriend(friendId) {
+            const user = auth.currentUser;
+            const userId = user.uid;
+
+            // Get the email of the user associated with the friendId
+            firestore.collection("users").doc(friendId).get()
+                .then((friendDoc) => {
+                    if (friendDoc.exists) {
+                        const friendData = friendDoc.data();
+                        const friendEmail = friendData.email;
+
+                        // Send a friend request to the receiving user
+                        sendFriendRequest(userId, friendEmail);
+                    } else {
+                        console.log("No such user with the provided ID.");
+                        alert("No such user with the provided ID.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                    alert("Error fetching user data: " + error.message);
+                });
+        }
+
+
+        // Function to send a friend request to the receiving user
+        function sendFriendRequest(senderId, receiverEmail) {
+            // Reference to the receiving user's document
+            const receiverRef = firestore.collection("users").where("email", "==", receiverEmail);
+
+            receiverRef.get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const receiverId = doc.id;
+
+                        // Add the sender's UID to the Friend_Requests array of the receiving user
+                        firestore.collection("users").doc(receiverId).update({
+                            Friend_Requests: firebase.firestore.FieldValue.arrayUnion(senderId)
+                        })
+                        .then(() => {
+                            console.log("Friend request sent successfully!");
+                            alert("Friend request sent successfully!");
+                        })
+                        .catch((error) => {
+                            console.error("Error sending friend request:", error);
+                            alert("Error sending friend request: " + error.message);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching receiver data:", error);
+                    alert("Error fetching receiver data: " + error.message);
+                });
+        }
+
+        // Function to fetch and display friend requests
+        function fetchFriendRequests() {
+            const user = auth.currentUser;
+            const userId = user.uid;
+
+            // Reference to the current user's document
+            const userRef = firestore.collection("users").doc(userId);
+
+            // Listen for changes to the Friend_Requests array
+            userRef.onSnapshot((doc) => {
+                const friendRequests = doc.data().Friend_Requests || [];
+                const friendRequestsCount = friendRequests.length;
+
+                // Display friend requests count
+                document.getElementById("friendRequestsCount").textContent = `Friend Requests (${friendRequestsCount})`;
+
+                // Display friend requests list
+                const friendRequestsList = document.getElementById("friendRequestsList");
+                friendRequestsList.innerHTML = "";
+
+                // Fetch usernames for friend requests
+                friendRequests.forEach((requestId) => {
+                    firestore.collection("users").doc(requestId).get()
+                        .then((requestDoc) => {
+                            const requestData = requestDoc.data();
+                            const requestUsername = requestData.username;
+
+                            // Create list item for each friend request
+                            const listItem = document.createElement("li");
+                            listItem.textContent = requestUsername;
+
+                            // Create approve button
+                            const approveButton = document.createElement("button");
+                            approveButton.textContent = "Approve";
+                            approveButton.onclick = function() {
+                                approveFriend(userId, requestId);
+                            };
+
+                            // Create decline button
+                            const declineButton = document.createElement("button");
+                            declineButton.textContent = "Decline";
+                            declineButton.onclick = function() {
+                                declineFriendRequest(userId, requestId);
+                            };
+
+                            // Append buttons to list item
+                            listItem.appendChild(approveButton);
+                            listItem.appendChild(declineButton);
+
+                            // Append list item to friend requests list
+                            friendRequestsList.appendChild(listItem);
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching friend request:", error);
+                        });
+                });
+            });
+        }
+
+        // Function to approve friend request
+        function approveFriend(userId, friendId) {
+            // Add friend to the current user's Friends list
+            firestore.collection("users").doc(userId).update({
+                Friends: firebase.firestore.FieldValue.arrayUnion(friendId)
+            })
+            .then(() => {
+                console.log("Friend approved successfully!");
+                alert("Friend approved successfully!");
+
+                // Add the current user to the friend's Friends list
+                firestore.collection("users").doc(friendId).update({
+                    Friends: firebase.firestore.FieldValue.arrayUnion(userId)
+                })
+                .then(() => {
+                    console.log("Current user added to friend's Friends list successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error adding current user to friend's Friends list:", error);
+                });
+
+                // Remove friend request from the current user's Friend_Requests list
+                firestore.collection("users").doc(userId).update({
+                    Friend_Requests: firebase.firestore.FieldValue.arrayRemove(friendId)
+                })
+                .then(() => {
+                    console.log("Friend request removed successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error removing friend request:", error);
+                });
+            })
+            .catch((error) => {
+                console.error("Error approving friend:", error);
+                alert("Error approving friend: " + error.message);
+            });
+        }
+
+
+        // Function to decline friend request
+        function declineFriendRequest(userId, friendId) {
+            // Remove friend request from the current user's Friend_Requests list
+            firestore.collection("users").doc(userId).update({
+                Friend_Requests: firebase.firestore.FieldValue.arrayRemove(friendId)
+            })
+            .then(() => {
+                console.log("Friend request declined successfully!");
+                alert("Friend request declined successfully!");
+            })
+            .catch((error) => {
+                console.error("Error declining friend request:", error);
+                alert("Error declining friend request: " + error.message);
+            });
+        }
+    </script>
+</head>
+<body>
+    <!-- Your main content -->
+    <h2>Previous Dives</h2>
+    <!-- Button to redirect to createlog.html -->
+    <button onclick="window.location.href='createlog.html'">Create New Dive Log</button>
+
+    <!-- Button to redirect to userprofile.html -->
+    <button onclick="window.location.href='userprofile.html'">Profile</button>
+
+    <!-- Display previous dives in an unordered list -->
+    <ul id="previousDivesList"></ul>
+
+    <!-- Add Friends section -->
+    <h2>Add Friends</h2>
+    <!-- Search bar for username -->
+    <input type="text" id="searchUsername" placeholder="Enter username">
+    <!-- Button to trigger the search -->
+    <button onclick="searchUsersByUsername()">Search</button>
+    <!-- Display search results -->
+    <ul id="searchResults"></ul>
+
+    <!-- Friend Requests section -->
+    <h2 id="friendRequestsCount">Friend Requests</h2>
+    <ul id="friendRequestsList"></ul>
+
+    <!-- Include your JavaScript files here -->
+    <!-- Your JavaScript links -->
+</body>
+</html>
