@@ -15,12 +15,12 @@
     <!-- Your Firebase configuration -->
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
-            authDomain: "dykkerloggbok.firebaseapp.com",
-            projectId: "dykkerloggbok",
-            storageBucket: "dykkerloggbok.appspot.com",
-            messagingSenderId: "80214002339",
-            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+            apiKey: "AIzaSyCeA8SRf-7F2Bd3uMuDc1Px-lXX3l2H1fQ",
+            authDomain: "divingsocialmedia-487eb.firebaseapp.com",
+            projectId: "divingsocialmedia-487eb",
+            storageBucket: "divingsocialmedia-487eb.appspot.com",
+            messagingSenderId: "372632777971",
+            appId: "1:372632777971:web:727e6da4ca1a9b28a7b386"
         };
 
         // Initialize Firebase
@@ -34,6 +34,8 @@
                 console.log("User is signed in:", user);
                 fetchPreviousDives(); // Fetch dives if user is signed in
                 fetchFriendRequests(); // Fetch friend requests
+                fetchFriendsPosts(); // Fetch friends' posts
+                fetchPublicPosts();
             } else {
                 console.log("No user is signed in.");
             }
@@ -295,6 +297,122 @@
                 alert("Error declining friend request: " + error.message);
             });
         }
+
+        // Function to fetch and display friends' posts
+        function fetchFriendsPosts() {
+            const user = auth.currentUser;
+            const userId = user.uid;
+
+            console.log("Current User ID:", userId); // Log current user ID
+
+            // Reference to the current user's document
+            const userRef = firestore.collection("users").doc(userId);
+
+            // Listen for changes to the Friends array
+            userRef.onSnapshot((doc) => {
+                const friends = doc.data().Friends || [];
+
+                console.log("Friends Array:", friends); // Log friends array
+
+                // Clear previous friends' posts
+                const friendsPostsList = document.getElementById("friendsPostsList");
+                friendsPostsList.innerHTML = "";
+
+                // Check if there are friends
+                if (friends.length === 0) {
+                    console.log("No friends found.");
+                    return;
+                }
+
+                // Iterate over each friend
+                friends.forEach((friendId) => {
+                    console.log("Friend ID:", friendId); // Log each friend
+
+                    // Reference to the friend's document
+                    const friendRef = firestore.collection("users").doc(friendId);
+
+                    // Retrieve friend's dives
+                    friendRef.collection("Dives").get()
+                        .then((querySnapshot) => {
+                            // Get friend's data
+                            friendRef.get()
+                                .then((friendDoc) => {
+                                    const friendData = friendDoc.data();
+                                    const friendUsername = friendData.username;
+
+                                    // Display friend's username
+                                    const friendHeader = document.createElement("h3");
+                                    friendHeader.textContent = `${friendUsername}'s Posts`;
+                                    friendsPostsList.appendChild(friendHeader);
+
+                                    // Iterate over each dive
+                                    querySnapshot.forEach((doc) => {
+                                        const diveData = doc.data();
+
+                                        // Create a list item
+                                        const diveItem = document.createElement("li");
+
+                                        // Create an anchor element
+                                        const diveLink = document.createElement("a");
+                                        diveLink.textContent = `Username: ${friendUsername}, Date: ${diveData.Date}, Location: ${diveData.DiveLocation}`;
+
+                                        // Set the href attribute with the Dive ID as a query parameter
+                                        diveLink.href = `log.html?diveId=${doc.id}`;
+
+                                        // Append the anchor element to the list item
+                                        diveItem.appendChild(diveLink);
+
+                                        // Append the list item to the unordered list
+                                        friendsPostsList.appendChild(diveItem);
+                                    });
+                                })
+                                .catch((error) => {
+                                    console.error("Error fetching friend data:", error);
+                                });
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching friend's dives:", error);
+                        });
+                });
+            });
+        }
+
+        // Function to fetch and display public posts
+        function fetchPublicPosts() {
+                // Reference to the "Public_Posts" collection
+                const publicPostsRef = firestore.collection("Public_Posts");
+
+                // Clear previous public posts
+                const publicPostsList = document.getElementById("publicPostsList");
+                publicPostsList.innerHTML = "";
+
+                // Retrieve public posts from Firestore
+                publicPostsRef.get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            const postData = doc.data();
+
+                            // Create a list item for each public post
+                            const postListItem = document.createElement("li");
+                            postListItem.classList.add("post");
+
+                            // Add content to the post list item
+                            postListItem.innerHTML = `
+                                <h3>Date: ${postData.Date}</h3>
+                                <p>Dive Location: ${postData.DiveLocation}</p>
+                                <p>Main Text Content: ${postData.MainTextContent}</p>
+                                <p>Posted By: ${postData.Username}</p>
+                            `;
+
+                            // Append the post list item to the public posts list
+                            publicPostsList.appendChild(postListItem);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching public posts:", error);
+                    });
+            }
+
     </script>
 </head>
 <body>
@@ -321,6 +439,13 @@
     <!-- Friend Requests section -->
     <h2 id="friendRequestsCount">Friend Requests</h2>
     <ul id="friendRequestsList"></ul>
+
+    <h2>Friends' Posts</h2>
+    <ul id="friendsPostsList"></ul>
+
+    <h2>Public Posts</h2>
+    <ul id="publicPostsList"></ul>
+
 
     <!-- Include your JavaScript files here -->
     <!-- Your JavaScript links -->

@@ -12,12 +12,12 @@
     <!-- Your Firebase configuration -->
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
-            authDomain: "dykkerloggbok.firebaseapp.com",
-            projectId: "dykkerloggbok",
-            storageBucket: "dykkerloggbok.appspot.com",
-            messagingSenderId: "80214002339",
-            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+            apiKey: "AIzaSyCeA8SRf-7F2Bd3uMuDc1Px-lXX3l2H1fQ",
+            authDomain: "divingsocialmedia-487eb.firebaseapp.com",
+            projectId: "divingsocialmedia-487eb",
+            storageBucket: "divingsocialmedia-487eb.appspot.com",
+            messagingSenderId: "372632777971",
+            appId: "1:372632777971:web:727e6da4ca1a9b28a7b386"
         };
 
         // Initialize Firebase
@@ -29,56 +29,85 @@
     <script>
         // Function to handle form submission
         function submitLogForm() {
-            // Get the current user
-            const user = firebase.auth().currentUser;
+        // Get the current user
+        const user = firebase.auth().currentUser;
 
-            if (user) {
-                // User is signed in
-                const userId = user.uid;
+        if (user) {
+            // User is signed in
+            const userId = user.uid;
 
-                // Get form data
-                const logData = {
-                    Date: document.getElementById("logDate").value,
-                    StartTime: document.getElementById("startTime").value,
-                    EndTime: document.getElementById("endTime").value,
-                    DiverName: document.getElementById("diverName").value,
-                    DiverBuddiesName: document.getElementById("diverBuddiesName").value,
-                    DiverCertifications: document.getElementById("diverCertifications").value,
-                    DiveLocation: document.getElementById("diveLocation").value,
-                    WaterTemperature: document.getElementById("waterTemperature").value,
-                    MaxDepth: document.getElementById("maxDepth").value,
-                    BottomTime: document.getElementById("bottomTime").value,
-                    TankSize: document.getElementById("tankSize").value,
-                    GasType: document.getElementById("gasType").value,
-                    StartPressure: document.getElementById("startPressure").value,
-                    EndPressure: document.getElementById("endPressure").value,
-                    WeatherConditions: document.getElementById("weatherConditions").value,
-                    Visibility: document.getElementById("visibility").value,
-                    CurrentConditions: document.getElementById("currentConditions").value,
-                    EquipmentList: document.getElementById("equipmentList").value,
-                    Observations: document.getElementById("observations").value,
-                    Incidents: document.getElementById("incidents").value,
-                    ImageUpload: "", // Placeholder for image upload
-                    VideoLinks: "", // Placeholder for video links
-                    MainTextContent: document.getElementById("mainTextContent").value // Main text content
-                };
+            // Get form data
+            const logData = {
+                Date: document.getElementById("logDate").value,
+                StartTime: document.getElementById("startTime").value,
+                EndTime: document.getElementById("endTime").value,
+                DiverName: document.getElementById("diverName").value,
+                DiverBuddiesName: document.getElementById("diverBuddiesName").value,
+                DiverCertifications: document.getElementById("diverCertifications").value,
+                DiveLocation: document.getElementById("diveLocation").value,
+                WaterTemperature: document.getElementById("waterTemperature").value,
+                MaxDepth: document.getElementById("maxDepth").value,
+                BottomTime: document.getElementById("bottomTime").value,
+                TankSize: document.getElementById("tankSize").value,
+                GasType: document.getElementById("gasType").value,
+                StartPressure: document.getElementById("startPressure").value,
+                EndPressure: document.getElementById("endPressure").value,
+                WeatherConditions: document.getElementById("weatherConditions").value,
+                Visibility: document.getElementById("visibility").value,
+                CurrentConditions: document.getElementById("currentConditions").value,
+                EquipmentList: document.getElementById("equipmentList").value,
+                Observations: document.getElementById("observations").value,
+                Incidents: document.getElementById("incidents").value,
+                ImageUpload: "", // Placeholder for image upload
+                VideoLinks: "", // Placeholder for video links
+                MainTextContent: document.getElementById("mainTextContent").value // Main text content
+            };
 
-                // Add the log data to Firestore under the user's "Dives" collection
-                firestore.collection("users").doc(userId).collection("Dives").add(logData)
-                    .then(() => {
-                        console.log("Log data added to Firestore successfully");
-                        alert("Log created successfully!");
-                    })
-                    .catch((error) => {
-                        console.error("Error adding log data to Firestore: ", error);
-                        alert("Failed to create log. Please try again later.");
-                    });
-            } else {
-                // No user is signed in
-                console.log("No user signed in");
-                alert("You need to be signed in to create a log.");
-            }
+            // Retrieve the user's document from Firestore
+            firestore.collection("users").doc(userId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        // User document found, extract the username
+                        const username = doc.data().username;
+
+                        // Add username to log data
+                        logData.Username = username;
+
+                        // Add the log data to Firestore under the user's "Dives" collection
+                        firestore.collection("users").doc(userId).collection("Dives").add(logData)
+                            .then(() => {
+                                console.log("Log data added to Firestore successfully");
+
+                                // Add the log data to "Public_Posts" collection under default Firestore database
+                                firestore.collection("Public_Posts").add(logData)
+                                    .then(() => {
+                                        console.log("Log data added to Public_Posts collection successfully");
+                                        alert("Log created and shared publicly!");
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error adding log data to Public_Posts collection: ", error);
+                                        alert("Failed to share log publicly. Please try again later.");
+                                    });
+                            })
+                            .catch((error) => {
+                                console.error("Error adding log data to Firestore: ", error);
+                                alert("Failed to create log. Please try again later.");
+                            });
+                    } else {
+                        console.log("User document not found");
+                        alert("Failed to retrieve user data. Please try again later.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error retrieving user data: ", error);
+                    alert("Failed to retrieve user data. Please try again later.");
+                });
+        } else {
+            // No user is signed in
+            console.log("No user signed in");
+            alert("You need to be signed in to create a log.");
         }
+    }
     </script>
 </head>
 <body>
@@ -134,8 +163,12 @@
                 <label for="weatherConditions">Weather Conditions:</label>
                 <input type="text" id="weatherConditions"><br>
 
-                <label for="visibility">Underwater Visibility:</label>
-                <input type="text" id="visibility"><br>
+                <label for="visibility">Post Visibility:</label>
+                <select id="visibility">
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                    <option value="friends">Friends Only</option>
+                </select><br><br>
 
                 <label for="currentConditions">Current Conditions:</label>
                 <input type="text" id="currentConditions"><br>
@@ -152,7 +185,6 @@
                 <label for="mainTextContent">Main Text Content:</label>
                 <textarea id="mainTextContent" rows="6"></textarea>
                 <br><br>
-
 
                 <!-- Submit button -->
                 <button type="submit">Submit</button>

@@ -15,12 +15,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyD_iveLOO_HtfcfuOhyVRUqo_zf6eiY1oo",
-            authDomain: "dykkerloggbok.firebaseapp.com",
-            projectId: "dykkerloggbok",
-            storageBucket: "dykkerloggbok.appspot.com",
-            messagingSenderId: "80214002339",
-            appId: "1:80214002339:web:4c9d2b537ff905f2164d16"
+            apiKey: "AIzaSyCeA8SRf-7F2Bd3uMuDc1Px-lXX3l2H1fQ",
+            authDomain: "divingsocialmedia-487eb.firebaseapp.com",
+            projectId: "divingsocialmedia-487eb",
+            storageBucket: "divingsocialmedia-487eb.appspot.com",
+            messagingSenderId: "372632777971",
+            appId: "1:372632777971:web:727e6da4ca1a9b28a7b386"
         };
         firebase.initializeApp(firebaseConfig);
         const firestore = firebase.firestore();
@@ -32,23 +32,63 @@
         // Retrieve the user ID from local storage
         const userId = localStorage.getItem('uid');
 
-        // Reference to the dive document in Firestore
-        const diveRef = firestore.collection("users").doc(userId).collection("Dives").doc(diveId);
+        // Reference to the dive document in Firestore for the current user
+        const personalDiveRef = firestore.collection("users").doc(userId).collection("Dives").doc(diveId);
 
-        // Get dive data from Firestore
-        diveRef.get()
+        // Get personal dive data from Firestore
+        personalDiveRef.get()
             .then((doc) => {
                 if (doc.exists) {
                     const diveData = doc.data();
                     displayDiveDetails(diveData);
                 } else {
-                    document.getElementById("diveDetails").textContent = "No such dive ID found!";
+                    // If the dive is not found in the personal dives, check in friends' dives
+                    checkFriendsDives(diveId);
                 }
             })
             .catch((error) => {
-                console.error("Error retrieving dive details:", error);
-                document.getElementById("diveDetails").textContent = "Error retrieving dive details.";
+                console.error("Error retrieving personal dive details:", error);
+                // If there's an error retrieving personal dive details, check in friends' dives
+                checkFriendsDives(diveId);
             });
+
+        // Function to check friends' dives
+        function checkFriendsDives(diveId) {
+            // Reference to the user document in Firestore
+            const userRef = firestore.collection("users").doc(userId);
+
+            // Retrieve the list of friends
+            userRef.get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        const friends = userData.Friends || [];
+
+                        // Loop through each friend and check if the dive exists
+                        friends.forEach((friendId) => {
+                            const friendDiveRef = firestore.collection("users").doc(friendId).collection("Dives").doc(diveId);
+                            friendDiveRef.get()
+                                .then((friendDoc) => {
+                                    if (friendDoc.exists) {
+                                        const diveData = friendDoc.data();
+                                        displayDiveDetails(diveData);
+                                    } else {
+                                        // If the dive is not found in this friend's dives, continue checking other friends
+                                        console.log(`Dive ID ${diveId} not found in friend's dives.`);
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(`Error retrieving dive details from friend ${friendId}:`, error);
+                                });
+                        });
+                    } else {
+                        console.error("No such user document found.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error retrieving user data:", error);
+                });
+        }
 
         // Function to display dive details
         function displayDiveDetails(diveData) {
