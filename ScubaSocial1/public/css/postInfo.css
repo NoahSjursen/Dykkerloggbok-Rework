@@ -1,0 +1,72 @@
+#content {
+    max-width: 800px;
+    margin: 20px auto; /* Center the content horizontally */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#content p {
+    margin-bottom: 10px; /* Add some spacing between paragraphs */
+}
+
+#content .media-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust the gap between media items */
+}
+
+#content .media-item {
+    max-width: 100%; /* Ensure media items don't exceed container width */
+    border-radius: 5px; /* Add border-radius for rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#content .media-item video {
+    width: 100%; /* Ensure videos fill the entire container */
+}
+
+
+/* Styling for info icon */
+.info-icon {
+    position: absolute;
+    top: 10px; /* Position from the top of the .post container */
+    left: 10px; /* Position from the left of the .post container */
+    cursor: pointer;
+    font-size: 24px; /* Adjust size as needed */
+    color: #4285f4; /* Blue color for info icon */
+    background-color: #e1f5fe; /* Light blue background for better visibility */
+    padding: 5px;
+    border-radius: 50%; /* Circular shape */
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#downloadIcon {
+    position: absolute;
+    top: 10px; /* Position from the top of the .post container */
+    right: 10px; /* Position from the right of the .post container */
+    cursor: pointer;
+    font-size: 24px; /* Adjust size as needed */
+    color: #4caf50; /* Green color for download icon */
+    background-color: #c8e6c9; /* Light green background for better visibility */
+    padding: 5px;
+    border-radius: 50%; /* Circular shape */
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#downloadIcon:hover {
+    color: #388e3c; /* Darker green color on hover */
+}

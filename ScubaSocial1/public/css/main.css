@@ -1,0 +1,32 @@
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background: linear-gradient(to bottom, #87CEEB 0%, #00008B 100%);
+    background-attachment: fixed; /* This will fix the background with respect to the viewport */
+    font-family: 'Raleway', sans-serif;
+}
+
+/* Styling for the create log button */
+.create-log-button {
+    display: block;
+    margin: 20px auto;
+    margin-bottom: -15px;
+    padding: 15px 30px;
+    font-size: 50px;
+    background-color: "blue"; /* Button background color */
+    color: #000000; /* Button text color */
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-log-button:hover {
+    background-color: "blue"; /* Button background color on hover */
+}

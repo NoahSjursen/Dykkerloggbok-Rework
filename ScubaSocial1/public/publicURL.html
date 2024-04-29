@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Social</title>
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- Your Firebase configuration -->
+    <script src="js/firebaseConfig.js"></script>
+
+    <!-- Include separate JavaScript files -->
+    <script src="js/auth.js"></script>
+
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" type="text/css" href="css/posts.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/loader.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Loader HTML -->
+    <div class="loader"></div>
+    <!-- Navigation bar -->
+    <nav>
+        <div id="profileContainer">
+            <img id="profilePicture" class="profile-photo" src="images/default-profile-photo.png" alt="Profile Photo" onclick="window.location.href='userprofile.html'">
+            <style>
+                #profileInfo {
+                    display: flex;
+                    align-items: center; /* Align items vertically center */
+                }
+            
+                #profileInfo h3, #profileInfo p {
+                    margin: 5px; /* Remove default margin */
+                }
+            </style>
+            
+            <div id="profileInfo">
+                <h3 id="username">Username</h3>
+                <p id="diverName">Diver Name</p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Your main content -->
+    <canvas id="oceanCanvas"></canvas>
+
+    <!-- Include your custom JavaScript files -->
+    <script src="js/wave.js"></script>
+    <script src="js/navbarMain.js"></script>
+    <script src="js/loader.js"></script>
+
+    <!-- Additional HTML content for the Public URL page -->
+    <h1 id="docTitle">Public URL Page</h1>
+    <button id="downloadButton">Download Data</button>
+
+    <script>
+        // Function to fetch document data from Firestore based on docID
+        function fetchDocumentData(docID) {
+            return firebase.firestore().collection("publicURL").doc(docID).get();
+        }
+
+        // Function to format the data as readable text
+        function formatDataAsText(postInfo) {
+            let formattedText = '';
+
+            // Define the order of fields
+            const fieldOrder = [
+                "DiverName",
+                "DiverBuddiesName",
+                "DiverCertifications",
+                "DiveLocation",
+                "Date",
+                "StartTime",
+                "EndTime",
+                "Visibility",
+                "MaxDepth",
+                "BottomTime",
+                "StartPressure",
+                "EndPressure",
+                "WaterTemperature",
+                "WeatherConditions",
+                "Incidents",
+                "Observations",
+                "GasType",
+                "EquipmentList",
+                "MainTextContent"
+                // Add or remove fields as needed
+            ];
+
+            // Exclude profilePhoto field
+            const { profilePhoto, ...postData } = postInfo;
+
+            // Iterate over each field in the specified order
+            fieldOrder.forEach((key) => {
+                // Check if the field exists in the post data
+                if (key in postData) {
+                    // Convert Date object to readable date format
+                    if (key === 'Date') {
+                        const date = new Date(postData[key].seconds * 1000); // Convert seconds to milliseconds
+                        formattedText += `${key}: ${date.toLocaleString()}\n`;
+                    } else {
+                        formattedText += `${key}: ${postData[key]}\n`;
+                    }
+                }
+            });
+
+            return formattedText;
+        }
+        
+        // Function to download data associated with docID and then delete the document
+        function downloadDataAndDelete(docID) {
+            // Fetch the data associated with docID from Firestore
+            fetchDocumentData(docID)
+                .then((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const formattedData = formatDataAsText(data);
+                        // Create a Blob object containing the formatted data
+                        const blob = new Blob([formattedData], { type: 'text/plain' });
+
+                        // Create a link element
+                        const link = document.createElement('a');
+
+                        // Set the link's attributes
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${docID}.txt`; // File name
+
+                        // Append the link to the document body
+                        document.body.appendChild(link);
+
+                        // Click the link to trigger the download
+                        link.click();
+
+                        // Remove the link from the document body
+                        document.body.removeChild(link);
+
+                        // Delete the document from Firestore
+                        firebase.firestore().collection("publicURL").doc(docID).delete()
+                            .then(() => {
+                                console.log("Document successfully deleted!");
+                            })
+                            .catch((error) => {
+                                console.error("Error deleting document: ", error);
+                            });
+                    } else {
+                        console.log("No such document!");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting document:", error);
+                });
+        }
+
+        // Event listener for download button
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.addEventListener('click', () => {
+            // Get docID from URL query parameter
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const docID = urlParams.get('docID');
+
+            if (docID) {
+                downloadDataAndDelete(docID);
+            } else {
+                console.error("No docID found in URL.");
+            }
+        });
+
+
+        // Extract docID from URL and set it as the title
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const docID = urlParams.get('docID');
+
+            if (docID) {
+                // Set the docID as the title
+                const docTitle = document.getElementById('docTitle');
+                docTitle.textContent = `${docID}.txt`;
+            }
+        });
+    </script>
+</body>
+</html>

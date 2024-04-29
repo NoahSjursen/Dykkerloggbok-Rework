@@ -1,0 +1,84 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: 'Raleway', sans-serif;
+    background-color: #f0f2f5; /* Light background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    touch-action: manipulation; /* Disable double-tap-to-zoom on touch devices */
+}
+
+/* Auth container styling */
+.auth-container {
+    background-color: #fff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    width: 400px; /* Set width */
+    padding: 30px; /* Add padding */
+    margin: 20px; /* Add margin */
+    touch-action: manipulation; /* Disable double-tap-to-zoom on touch devices */
+}
+
+/* Form container styling */
+.form-container {
+    text-align: center; /* Center align content */
+}
+
+/* Form title styling */
+.form-container h2 {
+    margin-bottom: 20px; /* Add margin below title */
+    color: #333; /* Dark text color */
+}
+
+/* Input group styling */
+.input-group {
+    margin-bottom: 20px; /* Add margin between input groups */
+}
+
+/* Label styling */
+.input-group label {
+    display: block; /* Display labels as block elements */
+    margin-bottom: 5px; /* Add margin below labels */
+    color: #666; /* Light text color */
+}
+
+/* Input styling */
+.input-group input {
+    width: 100%; /* Set input width to fill container */
+    padding: 10px; /* Add padding */
+    border: 1px solid #ccc; /* Add border */
+    border-radius: 5px; /* Rounded corners */
+    touch-action: manipulation; /* Disable double-tap-to-zoom on touch devices */
+}
+
+/* Button styling */
+.btn {
+    width: 100%; /* Set button width to fill container */
+    padding: 15px 10px; /* Add padding (15px top and bottom, 10px left and right) */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Button text color */
+    cursor: pointer; /* Add cursor pointer */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    touch-action: manipulation; /* Disable double-tap-to-zoom on touch devices */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Darker background color on hover */
+}
+
+/* Error message styling */
+.error-message {
+    color: #ff0000; /* Red color for error messages */
+    margin-top: 5px; /* Add margin on top */
+    touch-action: manipulation; /* Disable double-tap-to-zoom on touch devices */
+}

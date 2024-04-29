@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Scuba Social</title>
+    <link rel="stylesheet" href="css/createlog.css">
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="js/populate-gas-types.js"></script> <!-- Include this line -->
+    <!-- Include Firebase configuration -->
+</head>
+<body>
+        <!-- Overlay for loading -->
+    <div id="loadingOverlay" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.8); z-index: 1000;">
+        <div class="loader" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+    </div>
+
+    <!-- Log form -->
+    <form id="logForm" onsubmit="event.preventDefault(); submitLogForm();">
+        <!-- Log form fields -->
+        <label for="logDate">Date:</label>
+        <input type="date" id="logDate" required><br>
+
+        <label for="startTime">Start Time:</label>
+        <input type="time" id="startTime" required><br>
+
+        <label for="endTime">End Time:</label>
+        <input type="time" id="endTime" required><br>
+
+        <label for="diverName">Diver's Name:</label>
+        <input type="text" id="diverName" required><br>
+
+        <label for="diverBuddiesName">Diver Buddies Name:</label>
+        <input type="text" id="diverBuddiesName"><br>
+
+        <label for="diverCertifications">Diver's Certifications:</label>
+        <input type="text" id="diverCertifications"><br>
+
+        <label for="diveLocation">Dive Location:</label>
+        <input type="text" id="diveLocation"><br>
+
+        <label for="waterTemperature">Water Temperature:</label>
+        <input type="number" id="waterTemperature"><br>
+
+        <label for="maxDepth">Max Depth Reached:</label>
+        <input type="number" id="maxDepth"><br>
+
+        <label for="bottomTime">Bottom Time (min.):</label>
+        <input type="number" id="bottomTime"><br>
+
+        <label for="tankChoice">Tank:</label>
+        <select id="tankChoice"></select><br>
+
+        <!-- Gas Type -->
+        <label for="gasType">Gas Type:</label>
+        <select id="gasType">
+            <!-- Gas type options will be populated dynamically -->
+        </select>
+
+        <br>
+        <div id="gasMixes"></div> <!-- Container for gas mix inputs -->
+
+        <label for="startPressure">Start Pressure in Tanks:</label>
+        <input type="number" id="startPressure"><br>
+
+        <label for="endPressure">End Pressure in Tanks:</label>
+        <input type="number" id="endPressure"><br>
+
+        <label for="weatherConditions">Weather Conditions:</label>
+        <select id="weatherConditions">
+            <option value="Sunny">Sunny</option>
+            <option value="Cloudy">Cloudy</option>
+            <option value="Rainy">Rainy</option>
+            <option value="Snowy">Snowy</option>
+            <option value="Windy">Windy</option>
+            <option value="Foggy">Foggy</option>
+            <option value="Stormy">Stormy</option>
+            <!-- Add more options as needed -->
+        </select><br>
+        
+        
+
+        <label for="visibility">Post Visibility:</label>
+        <select id="visibility">
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+            <option value="friends">Friends Only</option>
+        </select><br><br>
+
+        <label for="equipmentList">Equipment List:</label>
+        <input type="text" id="equipmentList"><br>
+
+        <label for="observations">Observations:</label>
+        <textarea id="observations" rows="4"></textarea><br>
+
+        <label for="incidents">Incidents:</label>
+        <textarea id="incidents" rows="4"></textarea><br>
+
+        <label for="mainTextContent">Main Text Content:</label>
+        <textarea id="mainTextContent" rows="6"></textarea>
+        <br><br>
+
+
+        <label for="mediaUpload">Upload Media (Images/Videos):</label>
+        <input type="file" id="mediaUpload" accept="image/*,video/*" multiple><br>
+
+        <!-- Submit button -->
+        <button type="submit">Submit</button>
+    </form>
+    <script src="js/firebaseConfig.js"></script>
+
+    <!-- Include your custom JavaScript files -->
+    <script src="js/fetch-certifications.js"></script>
+    <script src="js/fetch-tanks.js"></script>
+    <script src="js/submit-log-form.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

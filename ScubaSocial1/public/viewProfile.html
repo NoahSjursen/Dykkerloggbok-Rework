@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Profile</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" type="text/css" href="css/profile.css">
+    <link rel="stylesheet" href="css/loader.css">
+    <link rel="stylesheet" href="css/personalPosts.css">
+
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+</head>
+<body>
+    <div class="loader"></div>
+    <div class="container">
+        <div class="content">
+            <div id="profileInfo"></div>
+
+            <!-- Your main content -->
+            <br>
+            <div id="profileDetails">
+                <img id="profilePicture" src="" alt="Profile Picture">
+                <br>
+                <p id="username"></p>
+                <p id="diverName"></p>
+                <p id="bio"></p>
+            </div>
+            <button id="statisticsButton" onclick="openModal()">
+                <i class="fas fa-chart-bar"></i> Statistics
+            </button>
+        </div>
+        <br>
+
+        <div id="statisticsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Statistics</h2>
+                <p><strong>Total Dives:</strong> <span id="dives"></span></p>
+                <p><strong>Average Depth:</strong> <span id="averageDepth"></span></p>
+                <p><strong>Total Time Underwater:</strong> <span id="totalTimeUnderwater"></span></p>
+                <p><strong>Most Common Diving Buddy:</strong> <span id="mostCommonBuddy"></span></p>
+                <p><strong>Average Bottom Time:</strong> <span id="averageBottomTime"></span></p>
+                <p><strong>Most Common Dive Location:</strong> <span id="mostCommonDiveLocation"></span></p>
+                <p><strong>Most Used Gas Type:</strong> <span id="mostUsedGasType"></span></p>
+                <p><strong>Weather Conditions Summary:</strong> <span id="weatherConditionsSummary"></span></p>
+                <p><strong>Average Water Temperature:</strong> <span id="averageWaterTemperature"></span></p>
+            </div>
+        </div>
+        
+        <div class="content">    
+            <!-- Container for personal posts -->
+            <div class="personal-posts-container" id="personalPostsContainer">
+                <!-- Dive posts will be dynamically added here as table rows -->
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    
+
+    <!-- Include your JavaScript files here -->
+    <script src="js/firebaseConfig.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/viewProfile.js"></script>
+    <script src="js/viewProfilePosts.js"></script>
+    <script src="js/loader.js"></script>
+    <script src="js/viewProfileStatistics.js"></script>
+</body>
+</html>

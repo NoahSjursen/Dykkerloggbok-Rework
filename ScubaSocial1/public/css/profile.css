@@ -1,0 +1,340 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #87CEEB 0%, #00008B 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Container styling */
+.container {
+    padding: 25px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto; /* Centers the container horizontally */
+    text-align: center;
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 480px) {
+    .container {
+        width: 100%; /* Makes the container fill the screen horizontally on mobile */
+        padding: 10px; /* Adjust padding for smaller screens if needed */
+    }
+}
+
+
+/* Content styling */
+.content {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+/* Profile picture styling */
+#profilePicture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+}
+
+#button-container {
+    text-align: center;
+}
+
+/* Input fields styling */
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button styling */
+button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Edit button styling */
+#editButton {
+    margin: 25px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Save button styling */
+#saveButton {
+    background-color: #008CBA;
+    color: white;
+}
+
+/* Upload picture button styling */
+#uploadPictureButton {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Friend requests styling */
+#friendRequestsList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#friendRequestsList li {
+    margin-bottom: 10px;
+}
+
+/* Search user styling */
+#searchUsername {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Search button styling */
+#searchButton {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* Search results styling */
+#searchResults {
+    list-style-type: none;
+    padding: 0;
+}
+
+#searchResults li {
+    margin-bottom: 5px;
+}
+
+/* Style for the button container */
+.button-container {
+    display: flex;
+    gap: 10px; /* Adjust the gap between buttons as needed */
+    margin-bottom: 20px; /* Add some bottom margin for spacing */
+}
+
+/* Style for the buttons */
+#editButton,
+#saveButton,
+#uploadPictureButton {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+/* Style for the equipment div */
+#equipmentDiv {
+    margin-bottom: 20px; /* Add some bottom margin for spacing */
+}
+
+/* Style for the Friends button */
+button:last-of-type {
+    margin-top: 20px; /* Add some top margin for spacing */
+}
+
+
+/* Profile info styling */
+/* Profile info styling */
+#profileInfo {
+    margin-top: 20px; /* Add space between profile picture and profile info */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange children in a column */
+    align-items: center; /* Center children horizontally */
+}
+
+#username {
+    font-weight: bold; /* Make username bold */
+    margin-top: 10px; /* Adjust top margin as needed */
+}
+
+#diverName {
+    margin-top: 10px;
+    font-style: italic; /* Make diver name italic */
+    color: #888; /* Set color to grey */
+    font-size: 0.9em; /* Set smaller font size */
+    margin-bottom: 30px; /* Add space between username and diver name */
+}
+
+#bio {
+    margin-top: 10px;
+    font-style: "light"; /* Make diver name light */
+    color: #888; /* Set color to grey */
+    font-size: 0.9em; /* Set smaller font size */
+    margin-bottom: 30px; /* Add space between username and diver name */
+}
+
+#searchUserDiv {
+    display: none;
+    margin-top: 20px; /* Add some top margin */
+}
+
+#searchUserDiv label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#searchUserDiv input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#searchUserDiv button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#searchResults li {
+    margin-bottom: 10px; /* Add spacing between each search result */
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#searchResults li button {
+    margin-left: 10px; /* Add spacing between the text and the button */
+    padding: 8px 15px;
+    cursor: pointer;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#searchResults li button:hover {
+    background-color: #005f75; /* Darken the background color on hover */
+}
+
+
+#friendRequestsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#friendRequestsList li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#friendRequestsList li:last-child {
+    margin-bottom: 0; /* Remove margin from the last item to prevent extra spacing */
+}
+
+
+
+.post-column {
+    background-color: #f0f0f0; /* Background color for each column */
+    padding: 20px; /* Padding around posts */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Adjust styles for individual posts as needed */
+.post {
+    margin-bottom: 20px; /* Spacing between posts */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Example styles for post content */
+.post-content {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.post-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+
+/* Modal styling */
+.modal {
+    display: flex; /* Enable flexbox */
+    position: fixed; /* Position the modal relative to the viewport */
+    z-index: 1000; /* Ensure the modal appears above other content */
+    left: 0;
+    top: 0;
+    width: 100%; /* Modal covers full width */
+    height: 100%; /* Modal covers full height */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    justify-content: center; /* Center modal horizontally */
+    align-items: center; /* Center modal vertically */
+    overflow: auto; /* Enable scrolling if content is larger than the screen */
+}
+
+.modal-content {
+    text-align: leftY;
+    background-color: #fefefe; /* Modal content background color */
+    margin: 25px auto; /* Auto margins for automatic centering */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners for modal content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    width: auto; /* Auto width based on content size */
+    max-width: 40%; /* Max width of modal content */
+    line-height: 1.6;
+}
+
+/* Close button styling */
+.close {
+    color: #aaa; /* Close button color */
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; /* Absolute position within the modal */
+    right: 20px; /* Distance from right edge */
+    top: 20px; /* Distance from top edge */
+}
+
+.close:hover,
+.close:focus {
+    color: black; /* Change close button color on hover/focus */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Adjust modal content styles for mobile */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        margin: auto; /* Ensure margin is auto on smaller screens */
+        padding: 20px; /* Adjust padding for smaller screens */
+        max-width: 90%; /* Modal takes up more width on smaller screens */
+    }
+}
+
+

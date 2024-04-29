@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuba Social</title>
+    <!-- Include Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- Your Firebase configuration -->
+    <script src="js/firebaseConfig.js"></script>
+
+    <!-- Include separate JavaScript files -->
+    <script src="js/auth.js"></script>
+
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" type="text/css" href="css/posts.css">
+    <link rel="stylesheet" href="css/postInfo.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/loader.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+
+</head>
+<body>
+    <!-- Loader HTML -->
+    <div class="loader"></div>
+    <!-- Navigation bar -->
+    <nav>
+        <div id="profileContainer">
+            <img id="profilePicture" class="profile-photo" src="images/default-profile-photo.png" alt="Profile Photo" onclick="window.location.href='userprofile.html'">
+            <style>
+                #profileInfo {
+                    display: flex;
+                    align-items: center; /* Align items vertically center */
+                }
+            
+                #profileInfo h3, #profileInfo p {
+                    margin: 5px; /* Remove default margin */
+                }
+            </style>
+            
+            <div id="profileInfo">
+                <h3 id="username">Username</h3>
+                <p id="diverName">Diver Name</p>
+            </div>
+            
+            
+        </div>
+        
+    </nav>
+    <div id="content">
+        <a id="downloadIcon" href="#"><i class="fas fa-download"></i></a>
+        <button id="sendButton">Send</button>
+    </div>
+    <!-- Your main content -->
+    <canvas id="oceanCanvas"></canvas>
+    <script src="js/wave.js"></script>
+    <script src="js/navbarMain.js"></script>
+    <script src="js/loader.js"></script>
+    <script src="js/postInfo.js"></script>
+</body>
+</html>
